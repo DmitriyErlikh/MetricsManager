@@ -24,7 +24,11 @@ namespace MetricsManager
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
+<<<<<<< HEAD
         {          
+=======
+        {
+>>>>>>> 8adeeab3d2aefae0443c7d4257deb2c82444b1e0
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
