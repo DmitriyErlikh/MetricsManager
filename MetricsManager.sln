@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsManager", "MetricsManager\MetricsManager.csproj", "{BDE2F2AB-0EE4-4F09-8CB3-B33BA0257091}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsManagerTests", "MetricsManagerTests\MetricsManagerTests.csproj", "{BE2B9778-230C-4668-8ED6-34F6B70C9BAB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsAgent", "MetricsAgent\MetricsAgent.csproj", "{E6D26DCF-6A76-4F14-8F24-CA392B03AFB9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsAgentTests", "MetricsAgentTests\MetricsAgentTests.csproj", "{8D1C899A-117C-4443-9657-FEC1241C067E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,7 +21,18 @@ Global
 		{BDE2F2AB-0EE4-4F09-8CB3-B33BA0257091}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDE2F2AB-0EE4-4F09-8CB3-B33BA0257091}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDE2F2AB-0EE4-4F09-8CB3-B33BA0257091}.Release|Any CPU.Build.0 = Release|Any CPU
-
+		{BE2B9778-230C-4668-8ED6-34F6B70C9BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE2B9778-230C-4668-8ED6-34F6B70C9BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2B9778-230C-4668-8ED6-34F6B70C9BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE2B9778-230C-4668-8ED6-34F6B70C9BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6D26DCF-6A76-4F14-8F24-CA392B03AFB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6D26DCF-6A76-4F14-8F24-CA392B03AFB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6D26DCF-6A76-4F14-8F24-CA392B03AFB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6D26DCF-6A76-4F14-8F24-CA392B03AFB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D1C899A-117C-4443-9657-FEC1241C067E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D1C899A-117C-4443-9657-FEC1241C067E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D1C899A-117C-4443-9657-FEC1241C067E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D1C899A-117C-4443-9657-FEC1241C067E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

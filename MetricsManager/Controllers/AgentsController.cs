@@ -36,8 +36,8 @@ namespace MetricsManager.Controllers
             return Ok();
         }
 
-        [HttpGet("raed")]
-        public IActionResult RaedAgents()
+        [HttpGet("read")]
+        public IActionResult ReadAgents()
         {
             return Ok(Info.Agents);
         }
