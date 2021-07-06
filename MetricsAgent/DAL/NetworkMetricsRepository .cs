@@ -12,14 +12,12 @@ namespace MetricsAgent.DAL
 
     public class NetworkMetricsRepository : INetworkMetricsRepository
     {
-        private const string ConnectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
-        // инжектируем соединение с базой данных в наш репозиторий через конструктор
+        IConnectionManager _connection;
 
         public void Create(NetworkMetric item)
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
-            // создаем команду
+            using var connection = _connection.CreateOpenedConnection();
+
             using var cmd = new SQLiteCommand(connection);
             // прописываем в команду SQL запрос на вставку данных
             cmd.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(@value, @time)";
@@ -39,8 +37,7 @@ namespace MetricsAgent.DAL
 
         public IList<NetworkMetric> GetByTimePeriod(DateTimeOffset FromTime, DateTimeOffset ToTime)
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
+            using var connection = _connection.CreateOpenedConnection();
             using var cmd = new SQLiteCommand(connection);
 
             cmd.CommandText = "SELECT * FROM cpumetrics WHERE time >= @FromTime AND time<= @ToTime";
