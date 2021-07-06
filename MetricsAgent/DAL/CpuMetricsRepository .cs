@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using MetricsAgent.DAL;
 
 namespace MetricsAgent.DAL
 {// маркировочный интерфейс
     // необходим, чтобы проверить работу репозитория на тесте-заглушке
     public interface ICpuMetricsRepository : IRepository<CpuMetric>
     {
-
+        
     }
 
     public class CpuMetricsRepository : ICpuMetricsRepository
-    {
-        private const string ConnectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
-        // инжектируем соединение с базой данных в наш репозиторий через конструктор
+    {        
+        IConnectionManager _connection;
 
         public void Create(CpuMetric item)
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
+            using var connection = _connection.CreateOpenedConnection();
+            
             // создаем команду
             using var cmd = new SQLiteCommand(connection);
             // прописываем в команду SQL запрос на вставку данных
@@ -39,8 +39,7 @@ namespace MetricsAgent.DAL
        
         public IList<CpuMetric> GetByTimePeriod(DateTimeOffset FromTime, DateTimeOffset ToTime)
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
+            using var connection = _connection.CreateOpenedConnection();
             using var cmd = new SQLiteCommand(connection);
 
             // прописываем в команду SQL запрос на получение данных из таблицы
