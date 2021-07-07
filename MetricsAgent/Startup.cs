@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MetricsAgent.DAL;
 using System.Data.SQLite;
+using AutoMapper;
 
 namespace MetricsAgent
 {
@@ -27,6 +28,10 @@ namespace MetricsAgent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            MapperConfiguration mapperConfiguration = new MapperConfiguration(
+                mp => mp.AddProfile(new MapperProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
             services.AddSingleton<ICpuMetricsRepository, CpuMetricsRepository>();
@@ -34,6 +39,7 @@ namespace MetricsAgent
             services.AddSingleton<IHDDMetricsRepository, HDDMetricsRepository>();
             services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
             services.AddSingleton<IRAMMetricsRepository, RAMMetricsRepository>();
+            services.AddSingleton(mapper);
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
@@ -65,71 +71,21 @@ namespace MetricsAgent
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO cpumetrics(value, time) VALUES(50,0)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO cpumetrics(value, time) VALUES(55,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO cpumetrics(value, time) VALUES(60,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO cpumetrics(value, time) VALUES(65,3)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO cpumetrics(value, time) VALUES(70,4)";
-                command.ExecuteNonQuery();
 
                 command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO dotnetmetrics(value, time) VALUES(50,0)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO dotnetmetrics(value, time) VALUES(55,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO dotnetmetrics(value, time) VALUES(60,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO dotnetmetrics(value, time) VALUES(65,3)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO dotnetmetrics(value, time) VALUES(70,4)";
                 command.ExecuteNonQuery();
 
                 command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO hddmetrics(value, time) VALUES(50,0)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO hddmetrics(value, time) VALUES(55,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO hddmetrics(value, time) VALUES(60,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO hddmetrics(value, time) VALUES(65,3)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO hddmetrics(value, time) VALUES(70,4)";
-                command.ExecuteNonQuery();
 
                 command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO networkmetrics(value, time) VALUES(50,0)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO networkmetrics(value, time) VALUES(55,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO networkmetrics(value, time) VALUES(60,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO networkmetrics(value, time) VALUES(65,3)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO networkmetrics(value, time) VALUES(70,4)";
-                command.ExecuteNonQuery();
 
                 command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO rammetrics(value, time) VALUES(50,0)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO rammetrics(value, time) VALUES(55,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO rammetrics(value, time) VALUES(60,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO rammetrics(value, time) VALUES(65,3)";
-                command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO rammetrics(value, time) VALUES(70,4)";
                 command.ExecuteNonQuery();
             }
         }

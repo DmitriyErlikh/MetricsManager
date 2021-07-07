@@ -8,36 +8,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers
 {
-    [Route("api/cpumetrics")]
+    [Route("api/hddmetrics")]
     [ApiController]
     public class HDDMetricsAgentController : ControllerBase
     {
         private readonly ILogger<HDDMetricsAgentController> _logger;
         private readonly IRepository<HDDMetric> _repository;
+        private readonly IMapper _mapper;
 
-        public HDDMetricsAgentController(ILogger<HDDMetricsAgentController> logger, IRepository<HDDMetric> repository)
+        public HDDMetricsAgentController(ILogger<HDDMetricsAgentController> logger, IRepository<HDDMetric> repository, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
+            _mapper = mapper;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
         }
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsDotnet([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
+        public IActionResult GetMetricsHDD([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Input: fromTime - {fromTime}; toTime - {toTime}");
+
             IList<HDDMetric> metrics = _repository.GetByTimePeriod(fromTime, toTime);
-            AllHDDMetricsResponse response = new AllHDDMetricsResponse();
+            AllHDDMetricsResponse response = new AllHDDMetricsResponse()
+            {
+                Metrics = new List<HDDMetricDto>()
+            };
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new HDDMetricDto
-                {
-                    Time = metric.Time,
-                    Value = metric.Value
-                });
+                response.Metrics.Add(_mapper.Map<HDDMetricDto>(metric));
             }
             return Ok(response);
         }

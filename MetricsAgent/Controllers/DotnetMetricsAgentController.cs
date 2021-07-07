@@ -8,36 +8,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers
 {
-    [Route("api/cpumetrics")]
+    [Route("api/dotnetmetrics")]
     [ApiController]
     public class DotnetMetricsAgentController : ControllerBase
     {
         private readonly ILogger<DotnetMetricsAgentController> _logger;
         private readonly IRepository<DotnetMetric> _repository;
+        private readonly IMapper _mapper;
 
-        public DotnetMetricsAgentController(ILogger<DotnetMetricsAgentController> logger, IRepository<DotnetMetric> repository)
+        public DotnetMetricsAgentController(ILogger<DotnetMetricsAgentController> logger, IRepository<DotnetMetric> repository, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
+            _mapper = mapper;
             _logger.LogDebug(1, "NLog встроен в CpuMetricsController");
         }
         [HttpGet("from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsDotnet([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation($"Input: fromTime - {fromTime}; toTime - {toTime}");
+
             IList<DotnetMetric> metrics = _repository.GetByTimePeriod(fromTime, toTime);
-            AllDotnetMetricsResponse response = new AllDotnetMetricsResponse();
+            AllDotnetMetricsResponse response = new AllDotnetMetricsResponse()
+            {
+                Metrics = new List<DotnetMetricDto>()
+            };
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new DotnetMetricDto
-                {
-                    Time = metric.Time,
-                    Value = metric.Value
-                });
+                response.Metrics.Add(_mapper.Map<DotnetMetricDto>(metric));
             }
             return Ok(response);
         }

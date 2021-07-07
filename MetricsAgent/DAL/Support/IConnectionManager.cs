@@ -11,9 +11,8 @@ namespace MetricsAgent.DAL
         private const string ConnectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
         public SQLiteConnection CreateOpenedConnection()
         {
-            using var connection = new SQLiteConnection(ConnectionString);
-            connection.Open();
-            return connection;
+            using var connection = new SQLiteConnection(ConnectionString);           
+            return connection.OpenAndReturn();
         }
     } 
 }
