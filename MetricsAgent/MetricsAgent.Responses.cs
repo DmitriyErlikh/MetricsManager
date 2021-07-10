@@ -57,4 +57,15 @@ namespace MetricsAgent.Responses
         public int Value { get; set; }
         public int Id { get; set; }
     }
+    public class JobSchedule
+    {
+        public JobSchedule(Type jobType, string cronExpression)
+        {
+            JobType = jobType;
+            CronExpression = cronExpression;
+        }
+
+        public Type JobType { get; }
+        public string CronExpression { get; }
+    }
 }
