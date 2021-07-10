@@ -13,6 +13,12 @@ using System.Threading.Tasks;
 using MetricsAgent.DAL;
 using System.Data.SQLite;
 using AutoMapper;
+using FluentMigrator.Runner;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
+using MetricsAgent.Responses;
+using MetricsAgent.Jobs;
 
 namespace MetricsAgent
 {
@@ -24,6 +30,7 @@ namespace MetricsAgent
         }
 
         public IConfiguration Configuration { get; }
+        private const string ConnectionString = @"Data Source=metrics.db; Version=3;";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,6 +47,42 @@ namespace MetricsAgent
             services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
             services.AddSingleton<IRAMMetricsRepository, RAMMetricsRepository>();
             services.AddSingleton(mapper);
+            services.AddFluentMigratorCore()
+                .ConfigureRunner(rb => rb
+                    // добавляем поддержку SQLite 
+                    .AddSQLite()
+                    // устанавливаем строку подключения
+                    .WithGlobalConnectionString(ConnectionString)
+                    // подсказываем где искать классы с миграциями
+                    .ScanIn(typeof(Startup).Assembly).For.Migrations()
+                ).AddLogging(lb => lb
+                    .AddFluentMigratorConsole());
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            // добавляем нашу задачу
+            services.AddSingleton<CpuMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(CpuMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+            services.AddSingleton<DotnetMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(DotnetMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton<HDDMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(HDDMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton<NetworkMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(NetworkMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton<RAMMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(RAMMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+
+
+            services.AddHostedService<QuartzHostedService>();
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
@@ -91,7 +134,7 @@ namespace MetricsAgent
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
             if (env.IsDevelopment())
             {
@@ -106,6 +149,8 @@ namespace MetricsAgent
             {
                 endpoints.MapControllers();
             });
+
+            migrationRunner.MigrateUp();
         }
 
     }

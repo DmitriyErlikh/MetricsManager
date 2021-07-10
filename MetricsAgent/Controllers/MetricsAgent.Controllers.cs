@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MetricsAgent.DAL;
 using MetricsAgent.Requests;
 using MetricsAgent.Responses;
+using MetricsAgent.Models;
 
 namespace MetricsAgent.Controllers
 {
