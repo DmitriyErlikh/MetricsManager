@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using MetricsAgent.DAL;
 using Dapper;
 using System.Linq;
+using MetricsAgent.Models;
 
 namespace MetricsAgent.DAL
 {

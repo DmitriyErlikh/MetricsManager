@@ -6,6 +6,7 @@ using Moq;
 using System;
 using Xunit;
 using MetricsAgent;
+using MetricsAgent.Models;
 
 namespace MetricsAgentTests
 {
