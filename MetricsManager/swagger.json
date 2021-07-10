@@ -1,0 +1,623 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Metric collection agent service API",
+    "description": "Provides collection data\r\n                        Loading processor, Free Memory\r\n                        Using hard disk, Return speed over the network\r\n                        Heap size  from registered agents",
+    "termsOfService": "https://example.com/terms",
+    "contact": {
+      "name": "Orlikov Fedor",
+      "url": "https://orlfi.tk",
+      "email": "orlfi@mail.ru"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://example.com/license"
+    },
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Agents": {
+      "get": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Returns information about all registered agents",
+        "description": "Sample request:\r\n            \r\n    GET api/agents",
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/Agents/register": {
+      "post": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Registers a new agent",
+        "description": "Sample request:\r\n            \r\n    GET api/agents/register",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterAgentCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterAgentCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterAgentCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/Agents/enable/{agentId}": {
+      "put": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Enables agent",
+        "description": "Sample request:\r\n            \r\n    GET api/enable/1",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/Agents/disable/{agentId}": {
+      "put": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Disables agent",
+        "description": "Sample request:\r\n            \r\n    GET api/disable/1",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/cpu/agent/{agentId}/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "CpuMetrics"
+        ],
+        "summary": "Gets CPU metrics on a given time range",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/cpu/agent/1/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/cpu/cluster/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "CpuMetrics"
+        ],
+        "summary": "Gets CPU metrics on a given time range from all agents",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/cpu/cluster/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/dotnet/agent/{agentId}/heap-size/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "DotnetMetrics"
+        ],
+        "summary": "Gets  Dotnet metrics on a given time range",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/dotnet/agent/1/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/dotnet/cluster/heap-size/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "DotNetMetrics"
+        ],
+        "summary": "Gets DotNet metrics on a given time range from all agents",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/dotnet/cluster/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/hdd/agent/{agentId}/disk-time/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "HDDMetrics"
+        ],
+        "summary": "Gets HDD metrics on a given time range",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/hdd/agent/1/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/hdd/cluster/disk-time/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "HDDMetrics"
+        ],
+        "summary": "Gets HDD metrics on a given time range from all agents",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/hdd/cluster/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/Jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Returns information about Jobs",
+        "description": "Sample request:\r\n            \r\n    GET /api/jobs",
+        "responses": {
+          "200": {
+            "description": "If everything is in order"
+          }
+        }
+      }
+    },
+    "/api/Jobs/pause": {
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Pause Jobs",
+        "description": "Sample request:\r\n            \r\n    GET /api/jobs/pause\r\n    {\r\n        \"JobName\": \"CpuMetricJob\"\r\n    }",
+        "requestBody": {
+          "description": "Job name. You can get a list of jobs: /api/jobs",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PauseJobCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PauseJobCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PauseJobCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "If everything is in order"
+          }
+        }
+      }
+    },
+    "/api/Jobs/resume": {
+      "put": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Resume Jobs",
+        "description": "Sample request:\r\n            \r\n    GET /api/jobs/resume\r\n    {\r\n        \"JobName\": \"CpuMetricJob\"\r\n    }",
+        "requestBody": {
+          "description": "Job name. You can get a list of jobs: /api/jobs",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResumeJobCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResumeJobCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResumeJobCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "If everything is in order"
+          }
+        }
+      }
+    },
+    "/api/metrics/network/agent/{agentId}/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "NetworkMetrics"
+        ],
+        "summary": "Gets Network metrics on a given time range",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/network/agent/1/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/network/cluster/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "NetworkMetrics"
+        ],
+        "summary": "Gets Network metrics on a given time range from all agents",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/network/cluster/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/ram/agent/{agentId}/available/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "RAMMetrics"
+        ],
+        "summary": "Gets RAM metrics on a given time range",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/ram/agent/1/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "AgentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    },
+    "/api/metrics/ram/cluster/available/from/{fromTime}/to/{toTime}": {
+      "get": {
+        "tags": [
+          "RamMetrics"
+        ],
+        "summary": "Gets RAM metrics on a given time range from all agents",
+        "description": "Sample request:\r\n            \r\n    GET api/metrics/ram/cluster/from/2021-07-01/to/2021-07-10",
+        "parameters": [
+          {
+            "name": "FromTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ToTime",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If everything is ok"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PauseJobCommand": {
+        "type": "object",
+        "properties": {
+          "JobName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegisterAgentCommand": {
+        "type": "object",
+        "properties": {
+          "AgentUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "IsEnabled": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResumeJobCommand": {
+        "type": "object",
+        "properties": {
+          "JobName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

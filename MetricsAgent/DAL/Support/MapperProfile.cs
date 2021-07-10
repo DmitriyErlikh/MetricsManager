@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MetricsAgent.DAL;
+using MetricsAgent.Models;
 using MetricsAgent.Responses;
 
 namespace MetricsAgent.DAL

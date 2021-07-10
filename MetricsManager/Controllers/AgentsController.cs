@@ -1,45 +1,48 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager.Models;
+using MetricsManager.DAL.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MetricsManager.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AgentsController : ControllerBase
     {
-        AgentInfo Info;
-        public AgentsController(AgentInfo info)
+        private IAgentRepository _repository;
+
+
+        public AgentsController(IAgentRepository repository)
         {
-            Info = info;
+            _repository = repository;
         }
 
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
         {
-            Info.Agents.Add(agentInfo);
+            _repository.RegisterAgent(agentInfo);
             return Ok();
         }
 
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
+            _repository.EnableById(agentId);
             return Ok();
         }
 
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
+            _repository.DisableById(agentId);
             return Ok();
         }
 
-        [HttpGet("read")]
-        public IActionResult ReadAgents()
+        [HttpGet("getList")]
+        public IActionResult GetRegisteredList()
         {
-            return Ok(Info.Agents);
+            return Ok(_repository.GetRegisteredList());
         }
     }
 }

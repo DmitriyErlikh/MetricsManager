@@ -13,6 +13,12 @@ using System.Threading.Tasks;
 using MetricsAgent.DAL;
 using System.Data.SQLite;
 using AutoMapper;
+using FluentMigrator.Runner;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
+using MetricsAgent.Responses;
+using MetricsAgent.Jobs;
 
 namespace MetricsAgent
 {
@@ -24,6 +30,7 @@ namespace MetricsAgent
         }
 
         public IConfiguration Configuration { get; }
+        private const string ConnectionString = @"Data Source=metrics.db; Version=3;";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,62 +47,63 @@ namespace MetricsAgent
             services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
             services.AddSingleton<IRAMMetricsRepository, RAMMetricsRepository>();
             services.AddSingleton(mapper);
+            services.AddFluentMigratorCore()
+                .ConfigureRunner(rb => rb
+                    // добавляем поддержку SQLite 
+                    .AddSQLite()
+                    // устанавливаем строку подключения
+                    .WithGlobalConnectionString(ConnectionString)
+                    // подсказываем где искать классы с миграциями
+                    .ScanIn(typeof(Startup).Assembly).For.Migrations()
+                ).AddLogging(lb => lb
+                    .AddFluentMigratorConsole());
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            // добавляем нашу задачу
+            services.AddSingleton<CpuMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(CpuMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+            services.AddSingleton<DotnetMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(DotnetMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton<HDDMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(HDDMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton<NetworkMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(NetworkMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton<RAMMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(RAMMetricJob),
+                cronExpression: "0/5 * * * * ?"));
+
+
+            services.AddHostedService<QuartzHostedService>();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MetricsAgent", Version = "v1" });
+            });
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
         {
             const string connectionString = "Data Source=metrics.db;Version=3;Pooling=true;Max Pool Size=100;";
             var connection = new SQLiteConnection(connectionString);
-            connection.Open();
-            PrepareSchema(connection);
-        }
-
-        private void PrepareSchema(SQLiteConnection connection)
-        {
-            using (var command = new SQLiteCommand(connection))
-            {
-                // задаем новый текст команды для выполнения
-                // удаляем таблицу с метриками если она существует в базе данных
-                command.CommandText = "DROP TABLE IF EXISTS cpumetrics";
-                // отправляем запрос в базу данных
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS dotnetmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS hddmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
-                command.ExecuteNonQuery();
-                command.CommandText = "DROP TABLE IF EXISTS rammetrics";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
-                command.ExecuteNonQuery();
-
-                command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY,
-                    value INT, time INT)";
-                command.ExecuteNonQuery();
-            }
-        }
+            connection.Open();        
+        }        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MetricsAgent v1"));
             }
 
             app.UseRouting();
@@ -106,6 +114,8 @@ namespace MetricsAgent
             {
                 endpoints.MapControllers();
             });
+
+            migrationRunner.MigrateUp();
         }
 
     }
